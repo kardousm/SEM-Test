@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, Button} from 'react-native';
 import * as Speech from 'expo-speech';
+import {Audio}  from 'expo-av';
 
-export default class ExpoTest extends Component {
+
+export default class AudioTest extends Component {
 
   state = {
     text_speak: "Practice your reading skill and improve your English, learn new vocabulary and broaden your general knowledge via our specifically chosen interesting topics below."
@@ -10,28 +12,32 @@ export default class ExpoTest extends Component {
 
   //multiple languages, chinese is zh-cmn. Supports multiple voices. Can pause, resume, stop etc...
 
-  onSpeak = () => {
-    Speech.speak(this.state.text_speak, {
-      language: 'en',
-      pitch: 1,
-      rate: 1,
-      voice: 'com.apple.ttsbundle.Samantha-compact',
-    })
-  }
-  onPause = () => {
-    Speech.pause()
+
+  onSpeak = async () => {
+    soundObject = new Audio.Sound()
+    await soundObject.loadAsync(require('./output.mp3'))
+    await soundObject.playAsync()
   }
 
-
-  onResume = () => {
-    Speech.resume()
+  onPause = async () => {
+    await soundObject.pauseAsync()
   }
 
-  onStop = () => {
-    Speech.stop()
+  onResume = async () => {
+    await soundObject.playAsync()
+  }
+
+  onStop = async () => {
+    await soundObject.stopAsync()
+  }
+
+  back = async() => {
+    await soundObject.setPositionAsync(millis)
   }
 
   render () {
+
+
       return (
         <View style={styles.container}>
           <View style={{paddingTop: 100}}>
@@ -48,8 +54,12 @@ export default class ExpoTest extends Component {
             onPress={this.onResume}
             />
             <Button
-            title="Stop"
+            title="Clear"
             onPress={this.onStop}
+            />
+            <Button
+            title="Back10"
+            onPress={this.back}
             />
             
           </View>
