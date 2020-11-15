@@ -80,6 +80,52 @@ def stream_handler(event):
         # image_url = storage.child("images/test-image").get_url(None)
         # print(api.ocr_url(image_url))
 
+        info = db.child("choices").get()
+        for choice in info.each():
+            if choice.key() == 'language':
+                language = choice.val()
+            elif choice.key() == 'speed':
+                speed = choice.val()
+            else:
+                voice = choice.val()
+
+        # print("Language: {0}".format(language))
+        # print("Speed: {0}".format(speed))
+        # print("Voice: {0}".format(voice))
+
+        if speed == "fast":
+            audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate=1.5)
+        elif speed == "normal":
+            audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+        else:
+            audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate=0.7)
+
+        if language == 'arabic':
+            api = ocrspace.API('e680ab78ba88957', language='ara')
+            if voice == 'male':
+                voice_param = texttospeech.VoiceSelectionParams(language_code="ar-XA",
+                                                                ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+            else:
+                voice_param = texttospeech.VoiceSelectionParams(language_code="ar-XA",
+                                                                ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+
+        elif language == "english":
+            api = ocrspace.API('e680ab78ba88957', language='eng')
+            if voice == 'male':
+                voice_param = texttospeech.VoiceSelectionParams(language_code="en-GB",
+                                                                ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+            else:
+                voice_param = texttospeech.VoiceSelectionParams(language_code="en-GB",
+                                                                ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+        else:
+            api = ocrspace.API('e680ab78ba88957', language='chs')
+            if voice == 'male':
+                voice_param = texttospeech.VoiceSelectionParams(language_code="cmn-TW",
+                                                                ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+            else:
+                voice_param = texttospeech.VoiceSelectionParams(language_code="cmn-TW",
+                                                                ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+
         storage.child("images/test-image").download("test-image.jpg")
         im = cv2.imread("test-image.jpg")
         h, w, c, = im.shape
@@ -92,8 +138,7 @@ def stream_handler(event):
         print(text_temp)
 
         synthesis_input = texttospeech.SynthesisInput(text=text_temp)
-        audio_config_normal = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
-        response = client.synthesize_speech(input=synthesis_input, voice=male2_voice, audio_config=audio_config_normal)
+        response = client.synthesize_speech(input=synthesis_input, voice=voice_param, audio_config=audio_config)
 
         # The response's audio_content is binary.
         with open("output.mp3", "wb") as out:
@@ -195,6 +240,3 @@ def role_play():
         print('Audio content written to file "output.mp3"')
 
 
-if __name__ == "__main__":
-    role_play()
-# audio_config_fast = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate = 1.5)
