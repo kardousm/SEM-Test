@@ -14,10 +14,11 @@ import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PlayAudio from './PlayAudio';
+import Choices from './Choices'
 
 
 
-//LogBox.ignoreAllLogs();
+LogBox.ignoreAllLogs();
 
 const RootStack = createStackNavigator();
 
@@ -26,6 +27,7 @@ export default class App extends React.Component {
     return (
       <NavigationContainer>
         <RootStack.Navigator>
+        <RootStack.Screen name="Choices" component={Choices} options={{headerShown: false}}/>
         <RootStack.Screen name="ImageTest" component={ImageTest} options={{headerShown: false}}/>
         <RootStack.Screen name="PlayAudio" component={PlayAudio} options={{headerShown: false}}/>
         </RootStack.Navigator>

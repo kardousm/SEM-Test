@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Button} from 'react-native';
+import { StyleSheet, Text, View, Button, Image} from 'react-native';
 import * as Speech from 'expo-speech';
 
 export default class ExpoTest extends Component {
@@ -34,7 +34,7 @@ export default class ExpoTest extends Component {
   render () {
       return (
         <View style={styles.container}>
-          <View style={{paddingTop: 100}}>
+          <View style={{paddingTop: 10}}>
             <Button
             title="Speak"
             onPress={this.onSpeak}
@@ -51,8 +51,8 @@ export default class ExpoTest extends Component {
             title="Stop"
             onPress={this.onStop}
             />
-            
           </View>
+
         </View>
     );
     }

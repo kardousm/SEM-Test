@@ -16,7 +16,6 @@ from firebase_admin import credentials
 import threading
 from google.cloud import texttospeech
 
-
 # c261a1f71388957
 
 # image_url = storage.child("images/test-image").get_url(None)
@@ -54,17 +53,18 @@ callback_done = threading.Event()
 db = firebase.database()
 api = ocrspace.API('e680ab78ba88957')
 
-female1_voice = texttospeech.VoiceSelectionParams(language_code="en-GB", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
-female2_voice = texttospeech.VoiceSelectionParams(language_code="en-AU", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+female1_voice = texttospeech.VoiceSelectionParams(language_code="en-GB",
+                                                  ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+female2_voice = texttospeech.VoiceSelectionParams(language_code="en-AU",
+                                                  ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
 
 male1_voice = texttospeech.VoiceSelectionParams(language_code="en-GB", ssml_gender=texttospeech.SsmlVoiceGender.MALE)
 male2_voice = texttospeech.VoiceSelectionParams(language_code="en-AU", ssml_gender=texttospeech.SsmlVoiceGender.MALE)
 
 
+# audio_config_fast = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate = 1.5)
 
-#audio_config_fast = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate = 1.5)
-
-#c261a1f71388957
+# c261a1f71388957
 
 # print(db.child("images").get().val())
 
@@ -74,11 +74,11 @@ def stream_handler(event):
     if temp == 0:
         temp += 1
     else:
-        #storage.child("images/test-image").download("test-image.jpg")
-        #print(api.ocr_file('test-image.jpg'))
+        # storage.child("images/test-image").download("test-image.jpg")
+        # print(api.ocr_file('test-image.jpg'))
         print('entered')
-        #image_url = storage.child("images/test-image").get_url(None)
-        #print(api.ocr_url(image_url))
+        # image_url = storage.child("images/test-image").get_url(None)
+        # print(api.ocr_url(image_url))
 
         storage.child("images/test-image").download("test-image.jpg")
         im = cv2.imread("test-image.jpg")
@@ -87,7 +87,7 @@ def stream_handler(event):
         foo = foo.resize((w, h), Image.ANTIALIAS)
         foo.save("test-image-c.jpg", quality=80, optimize=True)
         client = texttospeech.TextToSpeechClient()
-        #print(api.ocr_file('test-image-c.jpg'))
+        # print(api.ocr_file('test-image-c.jpg'))
         text_temp = api.ocr_file('test-image-c.jpg')
         print(text_temp)
 
@@ -103,6 +103,7 @@ def stream_handler(event):
             print('Audio content written to file "output.mp3"')
 
         results = db.child('value').child("text").set(val)
+
 
 my_stream = db.child("images").stream(stream_handler)
 
@@ -123,25 +124,69 @@ def list_voices():
         # Display the natural sample rate hertz for this voice. Example: 24000
         print(f"Natural Sample Rate Hertz: {voice.natural_sample_rate_hertz}\n")
 
+
 def role_play():
-    #arabic language = ara & arabic.jpg
-    #simplified chinese = chs & chinese.jpg
+    # arabic language = ara & arabic.jpg
+    # simplified chinese = chs & chinese.jpg
 
-    api = ocrspace.API('e680ab78ba88957', language='ara')
-    chinese = texttospeech.VoiceSelectionParams(language_code="cmn-TW",
-                                                    ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+    info = db.child("choices").get()
+    for choice in info.each():
+        if choice.key() == 'language':
+            language = choice.val()
+        elif choice.key() == 'speed':
+            speed = choice.val()
+        else:
+            voice = choice.val()
 
-    arabic = texttospeech.VoiceSelectionParams(language_code="ar-XA",
-                                                    ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+
+    # print("Language: {0}".format(language))
+    # print("Speed: {0}".format(speed))
+    # print("Voice: {0}".format(voice))
+
+    if speed == "fast":
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate=1.5)
+    elif speed == "normal":
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+    else:
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate=0.7)
+
+
+    if language == 'arabic':
+        api = ocrspace.API('e680ab78ba88957', language='ara')
+        if voice == 'male':
+            voice_param =  texttospeech.VoiceSelectionParams(language_code="ar-XA",
+                                               ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+        else:
+            voice_param = texttospeech.VoiceSelectionParams(language_code="ar-XA",
+                                               ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+
+    elif language == "english":
+        api = ocrspace.API('e680ab78ba88957', language='eng')
+        if voice == 'male':
+            voice_param =  texttospeech.VoiceSelectionParams(language_code="en-GB",
+                                               ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+        else:
+            voice_param = texttospeech.VoiceSelectionParams(language_code="en-GB",
+                                               ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+
+
+    else:
+        api = ocrspace.API('e680ab78ba88957', language='chs')
+        if voice == 'male':
+            voice_param =  texttospeech.VoiceSelectionParams(language_code="cmn-TW",
+                                               ssml_gender=texttospeech.SsmlVoiceGender.MALE)
+        else:
+            voice_param = texttospeech.VoiceSelectionParams(language_code="cmn-TW",
+                                               ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
+
+
     client = texttospeech.TextToSpeechClient()
 
-
-    text_temp = api.ocr_file('arabic.jpg')
+    text_temp = api.ocr_file('test-image-c.jpg')
     print(text_temp)
 
     synthesis_input = texttospeech.SynthesisInput(text=text_temp)
-    audio_config_normal = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
-    response = client.synthesize_speech(input=synthesis_input, voice=arabic, audio_config=audio_config_normal)
+    response = client.synthesize_speech(input=synthesis_input, voice=voice_param, audio_config=audio_config)
 
     # The response's audio_content is binary.
     with open("output.mp3", "wb") as out:
@@ -150,4 +195,6 @@ def role_play():
         print('Audio content written to file "output.mp3"')
 
 
-
+if __name__ == "__main__":
+    role_play()
+# audio_config_fast = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate = 1.5)

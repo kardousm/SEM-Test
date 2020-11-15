@@ -9,6 +9,8 @@ import * as Permissions from 'expo-permissions';
 import { Ionicons } from '@expo/vector-icons';
 import PlayAudio from './PlayAudio'
 import {useNavigation} from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+
 
 
 
@@ -72,6 +74,7 @@ export default class ImageTest extends Component {
 
 
   onChooseImagePress = async () => {
+
     const {status} = await Permissions.askAsync(Permissions.CAMERA);
     let result = await ImagePicker.launchCameraAsync();
     //let result = await ImagePicker.launchImageLibraryAsync(); allows you to select images from phone
@@ -90,6 +93,7 @@ export default class ImageTest extends Component {
         Alert.alert(error);
       })
     }
+
   }
 
   uploadImage = async (uri, imageName) => {
