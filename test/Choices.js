@@ -72,7 +72,7 @@ export default class Choices extends Component {
               items={[
                   { label: '中文', value: 'mandarin' },
                   { label: 'English', value: 'english' },
-                  { label: 'Arabic', value: 'arabic' }
+                  { label: 'Française', value: 'french' }
               ]}
           />
           <Text style={{fontSize: 16, marginTop:20}}>Speed:</Text>

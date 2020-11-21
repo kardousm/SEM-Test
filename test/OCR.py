@@ -100,13 +100,13 @@ def stream_handler(event):
         else:
             audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3, speaking_rate=0.7)
 
-        if language == 'arabic':
-            api = ocrspace.API('e680ab78ba88957', language='ara')
+        if language == 'french':
+            api = ocrspace.API('e680ab78ba88957', language='fre')
             if voice == 'male':
-                voice_param = texttospeech.VoiceSelectionParams(language_code="ar-XA",
+                voice_param = texttospeech.VoiceSelectionParams(language_code="fr-FR",
                                                                 ssml_gender=texttospeech.SsmlVoiceGender.MALE)
             else:
-                voice_param = texttospeech.VoiceSelectionParams(language_code="ar-XA",
+                voice_param = texttospeech.VoiceSelectionParams(language_code="fr-FR",
                                                                 ssml_gender=texttospeech.SsmlVoiceGender.FEMALE)
 
         elif language == "english":
