@@ -1,15 +1,7 @@
 import os
 import pyrebase
-import urllib
-import imutils
 from PIL import Image
-import pytesseract
 import cv2
-from skimage import io
-import io
-import json
-import numpy as np
-import requests
 import ocrspace
 import firebase_admin
 from firebase_admin import credentials
